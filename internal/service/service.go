@@ -67,10 +67,12 @@ func (s *Service) AddSample(ctx context.Context, runID string, sample model.Samp
 	if run.State != model.RunCollecting {
 		return model.Run{}, fmt.Errorf("%w: run %s is already sealed", model.ErrInvalidState, run.ID)
 	}
-	if err := calibration.ValidateSampleSequence(run.Samples); err != nil {
+	// 把待写入样本纳入序列一起校验，拦截同一观测时刻的重复写入
+	updated := append(run.Samples, sample)
+	if err := calibration.ValidateSampleSequence(updated); err != nil {
 		return model.Run{}, err
 	}
-	run.Samples = append(run.Samples, sample)
+	run.Samples = updated
 	if err := s.repo.UpdateRun(ctx, run); err != nil {
 		return model.Run{}, err
 	}

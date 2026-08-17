@@ -119,10 +119,8 @@ func writeError(w http.ResponseWriter, err error) {
 		status = http.StatusBadRequest
 	case errors.Is(err, model.ErrNotFound):
 		status = http.StatusNotFound
-	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples):
+	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples), errors.Is(err, model.ErrDuplicateObservation):
 		status = http.StatusConflict
-	case errors.Is(err, model.ErrDuplicateObservation):
-		status = http.StatusBadRequest
 	case errors.Is(err, contextCanceled()):
 		status = http.StatusRequestTimeout
 	}
