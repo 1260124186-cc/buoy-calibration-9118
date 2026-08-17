@@ -118,7 +118,7 @@ func writeError(w http.ResponseWriter, err error) {
 	case errors.Is(err, model.ErrInvalidInput):
 		status = http.StatusBadRequest
 	case errors.Is(err, model.ErrInvalidScale):
-		status = http.StatusConflict
+		status = http.StatusBadRequest
 	case errors.Is(err, model.ErrNotFound):
 		status = http.StatusNotFound
 	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples):

@@ -30,8 +30,8 @@ func New(repo Repository) *Service {
 }
 
 func (s *Service) CreateProfile(ctx context.Context, sensor string, scale, bias float64) (model.Profile, error) {
-	if strings.TrimSpace(sensor) == "" || scale == 0 {
-		return model.Profile{}, fmt.Errorf("%w: sensor name and non-zero scale are required", model.ErrInvalidInput)
+	if strings.TrimSpace(sensor) == "" {
+		return model.Profile{}, fmt.Errorf("%w: sensor name is required", model.ErrInvalidInput)
 	}
 	profile := model.Profile{
 		ID:         s.nextID("profile"),
@@ -39,7 +39,7 @@ func (s *Service) CreateProfile(ctx context.Context, sensor string, scale, bias 
 		Scale:      scale,
 		Bias:       bias,
 	}
-	if err := calibration.ValidateProfile(model.Profile{Scale: 1}); err != nil {
+	if err := calibration.ValidateProfile(profile); err != nil {
 		return model.Profile{}, err
 	}
 	if err := s.repo.CreateProfile(ctx, profile); err != nil {
