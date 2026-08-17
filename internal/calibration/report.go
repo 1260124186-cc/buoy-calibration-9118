@@ -11,9 +11,23 @@ func Correct(profile model.Profile, raw float64) float64 {
 	return raw*profile.Scale + profile.Bias
 }
 
+func ValidateSampleSequence(samples []model.Sample) error {
+	seen := make(map[time.Time]struct{}, len(samples))
+	for _, sample := range samples {
+		if _, exists := seen[sample.ObservedAt]; exists {
+			return model.ErrDuplicateObservation
+		}
+		seen[sample.ObservedAt] = struct{}{}
+	}
+	return nil
+}
+
 func BuildReport(run model.Run, profile model.Profile, generatedAt time.Time) (model.Report, error) {
 	if len(run.Samples) < 3 {
 		return model.Report{}, model.ErrTooFewSamples
+	}
+	if err := ValidateSampleSequence(run.Samples); err != nil {
+		return model.Report{}, err
 	}
 
 	samples := append([]model.Sample(nil), run.Samples...)
