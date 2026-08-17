@@ -18,10 +18,11 @@ func (m *Memory) HasSensor(ctx context.Context, sensor string) (bool, error) {
 	if err := ctx.Err(); err != nil {
 		return false, err
 	}
+	normalized := strings.ToLower(strings.TrimSpace(sensor))
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	for _, profile := range m.profiles {
-		if profile.SensorName == strings.TrimSpace(sensor) {
+		if strings.ToLower(profile.SensorName) == normalized {
 			return true, nil
 		}
 	}
