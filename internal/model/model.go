@@ -10,6 +10,7 @@ var (
 	ErrInvalidInput  = errors.New("invalid input")
 	ErrInvalidState  = errors.New("invalid run state")
 	ErrTooFewSamples = errors.New("too few samples")
+	ErrSensorExists  = errors.New("sensor profile already exists")
 )
 
 type Profile struct {

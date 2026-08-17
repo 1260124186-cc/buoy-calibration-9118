@@ -31,3 +31,20 @@ func TestCreateProfileRejectsZeroScale(t *testing.T) {
 		t.Fatal("expected validation message")
 	}
 }
+
+func TestCreateProfileRejectsSameSensorWithDifferentCase(t *testing.T) {
+	server := api.NewServer(service.New(store.NewMemory())).Routes()
+	for _, sensor := range []string{"oxygen", "OXYGEN"} {
+		request := httptest.NewRequest(http.MethodPost, "/profiles", bytes.NewBufferString(
+			`{"sensor_name":"`+sensor+`","scale":1,"bias":0}`,
+		))
+		response := httptest.NewRecorder()
+		server.ServeHTTP(response, request)
+		if sensor == "oxygen" && response.Code != http.StatusCreated {
+			t.Fatalf("first status = %d, want %d", response.Code, http.StatusCreated)
+		}
+		if sensor == "OXYGEN" && response.Code != http.StatusConflict {
+			t.Fatalf("second status = %d, want %d", response.Code, http.StatusConflict)
+		}
+	}
+}

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"strings"
 	"sync"
 
 	"buoy-calibration/internal/model"
@@ -11,6 +12,20 @@ type Memory struct {
 	mu       sync.RWMutex
 	profiles map[string]model.Profile
 	runs     map[string]model.Run
+}
+
+func (m *Memory) HasSensor(ctx context.Context, sensor string) (bool, error) {
+	if err := ctx.Err(); err != nil {
+		return false, err
+	}
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	for _, profile := range m.profiles {
+		if profile.SensorName == strings.TrimSpace(sensor) {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func NewMemory() *Memory {

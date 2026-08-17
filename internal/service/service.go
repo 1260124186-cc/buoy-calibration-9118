@@ -13,6 +13,7 @@ import (
 
 type Repository interface {
 	CreateProfile(context.Context, model.Profile) error
+	HasSensor(context.Context, string) (bool, error)
 	Profile(context.Context, string) (model.Profile, error)
 	CreateRun(context.Context, model.Run) error
 	Run(context.Context, string) (model.Run, error)
@@ -32,6 +33,13 @@ func New(repo Repository) *Service {
 func (s *Service) CreateProfile(ctx context.Context, sensor string, scale, bias float64) (model.Profile, error) {
 	if strings.TrimSpace(sensor) == "" || scale == 0 {
 		return model.Profile{}, fmt.Errorf("%w: sensor name and non-zero scale are required", model.ErrInvalidInput)
+	}
+	exists, err := s.repo.HasSensor(ctx, sensor)
+	if err != nil {
+		return model.Profile{}, err
+	}
+	if exists {
+		return model.Profile{}, fmt.Errorf("%w: %s", model.ErrSensorExists, sensor)
 	}
 	profile := model.Profile{
 		ID:         s.nextID("profile"),
