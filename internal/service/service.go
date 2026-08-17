@@ -39,6 +39,9 @@ func (s *Service) CreateProfile(ctx context.Context, sensor string, scale, bias 
 		Scale:      scale,
 		Bias:       bias,
 	}
+	if err := calibration.ValidateProfile(model.Profile{Scale: 1}); err != nil {
+		return model.Profile{}, err
+	}
 	if err := s.repo.CreateProfile(ctx, profile); err != nil {
 		return model.Profile{}, err
 	}

@@ -31,3 +31,15 @@ func TestCreateProfileRejectsZeroScale(t *testing.T) {
 		t.Fatal("expected validation message")
 	}
 }
+
+func TestCreateProfileRejectsNegativeScale(t *testing.T) {
+	server := api.NewServer(service.New(store.NewMemory())).Routes()
+	request := httptest.NewRequest(http.MethodPost, "/profiles", bytes.NewBufferString(
+		`{"sensor_name":"temperature","scale":-1,"bias":0}`,
+	))
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, request)
+	if response.Code != http.StatusBadRequest {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusBadRequest)
+	}
+}

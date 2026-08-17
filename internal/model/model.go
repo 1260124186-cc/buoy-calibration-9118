@@ -10,6 +10,7 @@ var (
 	ErrInvalidInput  = errors.New("invalid input")
 	ErrInvalidState  = errors.New("invalid run state")
 	ErrTooFewSamples = errors.New("too few samples")
+	ErrInvalidScale  = errors.New("invalid calibration scale")
 )
 
 type Profile struct {

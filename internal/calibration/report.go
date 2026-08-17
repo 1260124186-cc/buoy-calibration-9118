@@ -1,6 +1,7 @@
 package calibration
 
 import (
+	"fmt"
 	"sort"
 	"time"
 
@@ -11,7 +12,17 @@ func Correct(profile model.Profile, raw float64) float64 {
 	return raw*profile.Scale + profile.Bias
 }
 
+func ValidateProfile(profile model.Profile) error {
+	if profile.Scale <= 0 {
+		return fmt.Errorf("%w: scale must be positive", model.ErrInvalidScale)
+	}
+	return nil
+}
+
 func BuildReport(run model.Run, profile model.Profile, generatedAt time.Time) (model.Report, error) {
+	if err := ValidateProfile(profile); err != nil {
+		return model.Report{}, err
+	}
 	if len(run.Samples) < 3 {
 		return model.Report{}, model.ErrTooFewSamples
 	}
