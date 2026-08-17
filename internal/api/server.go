@@ -121,6 +121,8 @@ func writeError(w http.ResponseWriter, err error) {
 		status = http.StatusNotFound
 	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples):
 		status = http.StatusConflict
+	case errors.Is(err, model.ErrRequestAborted):
+		status = http.StatusInternalServerError
 	case errors.Is(err, contextCanceled()):
 		status = http.StatusRequestTimeout
 	}

@@ -39,7 +39,7 @@ func (s *Service) CreateProfile(ctx context.Context, sensor string, scale, bias 
 		Scale:      scale,
 		Bias:       bias,
 	}
-	if err := s.repo.CreateProfile(ctx, profile); err != nil {
+	if err := s.repo.CreateProfile(context.WithoutCancel(ctx), profile); err != nil {
 		return model.Profile{}, err
 	}
 	return profile, nil

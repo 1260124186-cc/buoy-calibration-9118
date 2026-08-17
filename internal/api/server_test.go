@@ -2,6 +2,7 @@ package api_test
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
@@ -29,5 +30,19 @@ func TestCreateProfileRejectsZeroScale(t *testing.T) {
 	}
 	if body["error"] == "" {
 		t.Fatal("expected validation message")
+	}
+}
+
+func TestCanceledCreateRequestReturnsRequestTimeout(t *testing.T) {
+	server := api.NewServer(service.New(store.NewMemory())).Routes()
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	request := httptest.NewRequest(http.MethodPost, "/profiles", bytes.NewBufferString(
+		`{"sensor_name":"salinity","scale":1,"bias":0}`,
+	)).WithContext(ctx)
+	response := httptest.NewRecorder()
+	server.ServeHTTP(response, request)
+	if response.Code != http.StatusRequestTimeout {
+		t.Fatalf("status = %d, want %d", response.Code, http.StatusRequestTimeout)
 	}
 }

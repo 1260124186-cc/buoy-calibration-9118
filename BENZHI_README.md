@@ -1,4 +1,4 @@
-# buoy-calibration-9118 Docker 交付说明
+# buoy-calibration__004 Docker 交付说明
 
 ## 项目概览
 - Buoy Calibration Service is a small HTTP service for ocean-observation teams.
@@ -20,8 +20,8 @@ go run ./cmd/server
 ## Docker 构建
 
 ```bash
-./build_benzhi_docker.sh buoy-calibration-9118-benzhi linux/amd64
-docker run --rm -it buoy-calibration-9118-benzhi bash
+./build_benzhi_docker.sh buoy-calibration__004-benzhi linux/amd64
+docker run --rm -it buoy-calibration__004-benzhi bash
 ```
 
 ## 环境

@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"fmt"
 	"sync"
 
 	"buoy-calibration/internal/model"
@@ -22,7 +23,7 @@ func NewMemory() *Memory {
 
 func (m *Memory) CreateProfile(ctx context.Context, profile model.Profile) error {
 	if err := ctx.Err(); err != nil {
-		return err
+		return fmt.Errorf("%w: %v", model.ErrRequestAborted, err)
 	}
 	m.mu.Lock()
 	defer m.mu.Unlock()
