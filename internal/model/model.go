@@ -13,6 +13,18 @@ var (
 	ErrDuplicateObservation = errors.New("duplicate observation")
 )
 
+type DuplicateObservationError struct {
+	ObservedAt time.Time
+}
+
+func (e *DuplicateObservationError) Error() string {
+	return "duplicate observation at " + e.ObservedAt.UTC().Format(time.RFC3339Nano)
+}
+
+func (e *DuplicateObservationError) Is(target error) bool {
+	return target == ErrDuplicateObservation
+}
+
 type Profile struct {
 	ID         string  `json:"id"`
 	SensorName string  `json:"sensor_name"`

@@ -67,7 +67,8 @@ func (s *Service) AddSample(ctx context.Context, runID string, sample model.Samp
 	if run.State != model.RunCollecting {
 		return model.Run{}, fmt.Errorf("%w: run %s is already sealed", model.ErrInvalidState, run.ID)
 	}
-	if err := calibration.ValidateSampleSequence(run.Samples); err != nil {
+	candidate := append(append([]model.Sample(nil), run.Samples...), sample)
+	if err := calibration.ValidateSampleSequence(candidate); err != nil {
 		return model.Run{}, err
 	}
 	run.Samples = append(run.Samples, sample)

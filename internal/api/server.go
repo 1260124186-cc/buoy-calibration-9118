@@ -122,7 +122,7 @@ func writeError(w http.ResponseWriter, err error) {
 	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples):
 		status = http.StatusConflict
 	case errors.Is(err, model.ErrDuplicateObservation):
-		status = http.StatusBadRequest
+		status = http.StatusConflict
 	case errors.Is(err, contextCanceled()):
 		status = http.StatusRequestTimeout
 	}

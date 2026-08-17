@@ -15,7 +15,7 @@ func ValidateSampleSequence(samples []model.Sample) error {
 	seen := make(map[time.Time]struct{}, len(samples))
 	for _, sample := range samples {
 		if _, exists := seen[sample.ObservedAt]; exists {
-			return model.ErrDuplicateObservation
+			return &model.DuplicateObservationError{ObservedAt: sample.ObservedAt}
 		}
 		seen[sample.ObservedAt] = struct{}{}
 	}
