@@ -6,10 +6,10 @@ import (
 )
 
 var (
-	ErrNotFound       = errors.New("record not found")
-	ErrInvalidInput   = errors.New("invalid input")
-	ErrInvalidState   = errors.New("invalid run state")
-	ErrTooFewSamples  = errors.New("too few samples")
+	ErrNotFound      = errors.New("record not found")
+	ErrInvalidInput  = errors.New("invalid input")
+	ErrInvalidState  = errors.New("invalid run state")
+	ErrTooFewSamples = errors.New("too few samples")
 	ErrRequestAborted = errors.New("request aborted")
 )
 

@@ -1,10 +1,10 @@
 package api
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"net/http"
-	"strings"
 	"time"
 
 	"buoy-calibration/internal/model"
@@ -121,16 +121,12 @@ func writeError(w http.ResponseWriter, err error) {
 		status = http.StatusNotFound
 	case errors.Is(err, model.ErrInvalidState), errors.Is(err, model.ErrTooFewSamples):
 		status = http.StatusConflict
-	case errors.Is(err, model.ErrRequestAborted):
-		status = http.StatusInternalServerError
-	case errors.Is(err, contextCanceled()):
+	case errors.Is(err, model.ErrRequestAborted), errors.Is(err, context.Canceled), errors.Is(err, context.DeadlineExceeded):
+		status = http.StatusRequestTimeout
+	case errors.Is(err, context.Canceled), errors.Is(err, context.DeadlineExceeded):
 		status = http.StatusRequestTimeout
 	}
 	writeJSON(w, status, map[string]string{"error": err.Error()})
-}
-
-func contextCanceled() error {
-	return errors.New(strings.TrimSpace("context canceled"))
 }
 
 func writeJSON(w http.ResponseWriter, status int, value any) {
