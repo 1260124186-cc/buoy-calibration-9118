@@ -18,10 +18,12 @@ func (m *Memory) HasSensor(ctx context.Context, sensor string) (bool, error) {
 	if err := ctx.Err(); err != nil {
 		return false, err
 	}
+	sensor = strings.TrimSpace(sensor)
 	m.mu.RLock()
 	defer m.mu.RUnlock()
 	for _, profile := range m.profiles {
-		if profile.SensorName == strings.TrimSpace(sensor) {
+		// 传感器名大小写不敏感比较，避免 oxygen 与 OXYGEN 建出两份档案
+		if strings.EqualFold(profile.SensorName, sensor) {
 			return true, nil
 		}
 	}
