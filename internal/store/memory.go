@@ -80,10 +80,19 @@ func (m *Memory) UpdateRun(ctx context.Context, run model.Run) error {
 }
 
 func cloneRun(run model.Run) model.Run {
-	run.Samples = append([]model.Sample(nil), run.Samples...)
+	run.Samples = cloneSamples(run.Samples)
 	if run.Report != nil {
 		report := *run.Report
 		run.Report = &report
 	}
 	return run
+}
+
+func cloneSamples(samples []model.Sample) []model.Sample {
+	if len(samples) == 0 {
+		return nil
+	}
+	copied := make([]model.Sample, len(samples))
+	copy(copied, samples)
+	return copied
 }
